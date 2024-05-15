@@ -14,5 +14,5 @@ conda activate grodecoder-sandbox-env
 ```
 
 ## Usage 
-Run the NoteBook ```lipide.ipynb```
+Run the NoteBook ```lipide.ipynb```.  
 This NoteBook that analyzes the database LipidMap (https://www.lipidmaps.org/databases/lmsd/overview). It download the data, if it not already exist. It extracts information that can be used to identify lipids in the GRO and PDB files.
