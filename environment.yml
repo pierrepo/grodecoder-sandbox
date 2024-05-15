@@ -1,0 +1,36 @@
+name: grodecoder-sandbox-env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - scipy
+  - matplotlib
+  - pandas
+  - biopython
+  - jupyterlab>=4
+  # Linters and formaters
+  - pycodestyle
+  - pydocstyle
+  - pylint
+  - black
+  - ruff
+  # MD tools
+  - mdanalysis
+  - networkx
+  - pymol-open-source
+  # Logging
+  - loguru
+  # RDKit
+  # https://scikit-learn.org/stable/install.html
+  - rdkit
+  # Requests
+  # https://anaconda.org/conda-forge/requests
+  - requests
+  - pip:
+    # watermark: keep track of dependency versions
+    - watermark
+
+
