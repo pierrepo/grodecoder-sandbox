@@ -32,5 +32,7 @@ dependencies:
   - pip:
     # watermark: keep track of dependency versions
     - watermark
-
+    # Playwright
+    # https://playwright.dev/python/docs/intro
+    - playwright
 
