@@ -1,6 +1,6 @@
 """This script going to scrape information from the CHARMM-GUI Archive for the small molecule (https://www.charmm-gui.org/?doc=archive&lib=csml).
-This page contains the resname, the common name, a link to the structural view and to download the PDB for the selected lipid. 
-Each lipid are sorted by categories. 
+This page contains the resname, the common name, a link to the structural view and to download the PDB for the selected lipid.
+Each lipid are sorted by categories.
 
 Usage
 -----
@@ -22,7 +22,7 @@ from collections import Counter
 import MDAnalysis as mda
 
 
-def get_formula_res_name_from_pdb_file(link: str) -> tuple(str, str):
+def get_formula_res_name_from_pdb_file(link: str) -> tuple[str, str]:
     """Fetches a PDB file from a given link, analyzes it to extract the formula and residue name.
 
     Ressources
@@ -65,7 +65,7 @@ def get_formula_res_name_from_pdb_file(link: str) -> tuple(str, str):
 
     # Read the PDB file we just download, with MDAnalylis
     molecule = mda.Universe(filename)
-    atom_name = []
+    atom_names = []
     res_name = set()
 
     # Save in a list, all the atom names and residue name from this file.
@@ -77,7 +77,7 @@ def get_formula_res_name_from_pdb_file(link: str) -> tuple(str, str):
             atom_names.append(atom_name)
         res_name.add(atom.resname)
 
-    atom_names = Counter(atom_name)
+    atom_names = Counter(atom_names)
     sorted_atom_counts = sorted(atom_names.items())
     formula = ''.join(f"{atom}{count}" if count > 1 else atom for atom, count in sorted_atom_counts)
 
