@@ -7,7 +7,6 @@ Usage
     python scrap_charmm_gui_CMSL.py
 """
 
-
 __authors__ = ("Karine DUONG", "Pierre POULAIN")
 __contact__ = "pierre.poulain@u-paris.fr"
 
@@ -28,7 +27,7 @@ def get_formula_res_name_from_pdb_file(link: str) -> tuple[str, str]:
     Ressources
     ----------
     https://docs.mdanalysis.org/2.0.0/documentation_pages/topology/guessers.html#guessing-elements-from-atom-names
-    https://docs.mdanalysis.org/2.0.0/documentation_pages/topology/guessers.html#MDAnalysis.topology.guessers.guess_atom_type 
+    https://docs.mdanalysis.org/2.0.0/documentation_pages/topology/guessers.html#MDAnalysis.topology.guessers.guess_atom_type
 
     Parameters
     ----------
@@ -39,7 +38,7 @@ def get_formula_res_name_from_pdb_file(link: str) -> tuple[str, str]:
     -------
         tuple(str, str)
             A tuple containing the chemical formula and the name of the residue.
-    
+
     Raises
     ------
         requests.exceptions.HTTPError: If an HTTP error occurs during the request.
@@ -51,7 +50,7 @@ def get_formula_res_name_from_pdb_file(link: str) -> tuple[str, str]:
         filename = link.split("/")[-1]
         open(filename, "wb").write(response.content)
 
-    #In case the given link leads to nothing (error 404)
+    # In case the given link leads to nothing (error 404)
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
         return "HTTP error", None
@@ -59,7 +58,7 @@ def get_formula_res_name_from_pdb_file(link: str) -> tuple[str, str]:
         print(f"An error occurred: {err}")
         return "Error", None
 
-    #In case, the file is empty, so 0 octet
+    # In case, the file is empty, so 0 octet
     if os.path.getsize(filename) == 0:
         return "Empty file", None
 
@@ -69,7 +68,7 @@ def get_formula_res_name_from_pdb_file(link: str) -> tuple[str, str]:
     res_name = set()
 
     # Save in a list, all the atom names and residue name from this file.
-    # Unless the atom name is H. 
+    # Unless the atom name is H.
     for atom in molecule.atoms:
         atom_name = f"{mda.topology.guessers.guess_atom_type(atom.name)}"
         # print(mda.topology.guessers.guess_atom_element(atom.name))
@@ -79,9 +78,11 @@ def get_formula_res_name_from_pdb_file(link: str) -> tuple[str, str]:
 
     atom_names = Counter(atom_names)
     sorted_atom_counts = sorted(atom_names.items())
-    formula = ''.join(f"{atom}{count}" if count > 1 else atom for atom, count in sorted_atom_counts)
+    formula = "".join(
+        f"{atom}{count}" if count > 1 else atom for atom, count in sorted_atom_counts
+    )
 
-    #To delete the file we just download
+    # To delete the file we just download
     current_dir = Path.cwd()
     absolute_file_path = current_dir / filename
     relative_path = absolute_file_path.relative_to(current_dir)
@@ -109,11 +110,19 @@ def parse_lipid_from_charmm_gui() -> pd.core.frame.DataFrame:
     url = "https://www.charmm-gui.org/?doc=archive&lib=csml"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
-    
+
     base_url = "https://www.charmm-gui.org/"
-    col_names = ["Category", "Alias", "Name", "View_Link", "PDB_Link", "Formula", "Res_name_PDB"]
+    col_names = [
+        "Category",
+        "Alias",
+        "Name",
+        "View_Link",
+        "PDB_Link",
+        "Formula",
+        "Res_name_PDB",
+    ]
     recordings = []
-        
+
     rows = soup.find_all("tbody")
     for row in rows:
         category = row.get("id")
@@ -123,22 +132,36 @@ def parse_lipid_from_charmm_gui() -> pd.core.frame.DataFrame:
                 alias = cells[0].text.strip()
                 name = cells[1].text.strip()
                 view_structure_link = f"https://www.charmm-gui.org/?doc=visualization.ngl.archive&pdb_id={alias.lower()}&arg=csml"
-                download_link = base_url + cells[4].find('a')['href'] if cells[4].find('a') else None
+                download_link = (
+                    base_url + cells[4].find("a")["href"]
+                    if cells[4].find("a")
+                    else None
+                )
 
                 formula, resname_PDB = None, None
-                if download_link!=None:
-                    formula, resname_PDB = get_formula_res_name_from_pdb_file(download_link)
+                if download_link != None:
+                    formula, resname_PDB = get_formula_res_name_from_pdb_file(
+                        download_link
+                    )
 
-                recording = {"Category": category, 
-                            "Alias": alias, 
-                            "Name": name,
-                            "View_Link": view_structure_link, 
-                            "PDB_Link": download_link, 
-                            "Formula": formula, 
-                            "Res_name_PDB": resname_PDB}
+                recording = {
+                    "Category": category,
+                    "Alias": alias,
+                    "Name": name,
+                    "View_Link": view_structure_link,
+                    "PDB_Link": download_link,
+                    "Formula": formula,
+                    "Res_name_PDB": resname_PDB,
+                }
                 recordings.append(recording)
     df = pd.DataFrame(recordings)
-    df.to_csv('lipid_CHARMM_GUI_CSML.csv', sep=';', index=False, header=True, columns=col_names)
+    df.to_csv(
+        "lipid_CHARMM_GUI_CSML.csv",
+        sep=";",
+        index=False,
+        header=True,
+        columns=col_names,
+    )
     return df
 
 
