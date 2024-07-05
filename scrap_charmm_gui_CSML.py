@@ -157,10 +157,11 @@ def parse_lipid_from_charmm_gui() -> pd.core.frame.DataFrame:
     df = pd.DataFrame(recordings)
     df.to_csv(
         "lipid_CHARMM_GUI_CSML.csv",
-        sep=";",
+        sep=",",
         index=False,
         header=True,
         columns=col_names,
+        quotechar='"',
     )
     return df
 
