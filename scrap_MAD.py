@@ -138,7 +138,7 @@ def parse_MAD_loop() -> pd.core.frame.DataFrame:
     data = parse_MAD_one(1, recordings)
     df = pd.DataFrame(data)
     df.to_csv(
-        "lipid_MAD.csv", sep=";", index=False, header=True, columns=df.columns.tolist()
+        "lipid_MAD.csv", sep=",", quotechar='"', index=False, header=True, columns=df.columns.tolist()
     )
     return df
 
